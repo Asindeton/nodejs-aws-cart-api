@@ -3,32 +3,21 @@ import { Construct } from 'constructs';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as apiGw from 'aws-cdk-lib/aws-apigateway';
-import { cartApiHandler } from '../../src/main';
-
-const CORS_PREFLIGHT_SETTINGS = {
-  allowOrigins: ['*'],
-  allowHeaders: ['*'],
-  allowMethods: apiGw.Cors.ALL_METHODS,
-};
+import path = require('path');
 
 export class CdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const importProductFiles = new NodejsFunction(
-      this,
-      'GetProductsListHandler',
-      {
-        runtime: lambda.Runtime.NODEJS_18_X,
-        functionName: 'cartApiHandler',
-        handler: 'cartApiHandler',
-        entry: '../../src/main.ts',
-      },
-    );
+    const cartApiHandler = new NodejsFunction(this, 'cartApiHandler', {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      entry: path.resolve(__dirname, '..', '..', 'dist', 'main.js'),
+      functionName: 'cartApiHandler',
+    });
 
-    const api = new apiGw.RestApi(this, 'card-api', {
+    const api = new apiGw.LambdaRestApi(this, 'card-api', {
       restApiName: 'Card Api service',
-      description: 'Card Api service',
+      handler: cartApiHandler,
     });
   }
 }
