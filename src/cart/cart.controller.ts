@@ -14,7 +14,8 @@ import { OrderService } from '../order';
 import { AppRequest, getUserIdFromRequest } from '../shared';
 
 import { CartService } from './services';
-import { JwtAuthGuard } from '../auth';
+import { BasicAuthGuard } from '../auth';
+import { calculateCartTotal } from './models-rules';
 
 @Controller('api/profile/cart')
 export class CartController {
@@ -24,7 +25,7 @@ export class CartController {
   ) {}
 
   // @UseGuards(JwtAuthGuard)
-  // @UseGuards(BasicAuthGuard)
+  @UseGuards(BasicAuthGuard)
   @Get()
   async findUserCart(@Req() req: AppRequest) {
     const cart = await this.cartService.findOrCreateByUserId(
@@ -34,17 +35,16 @@ export class CartController {
     return {
       statusCode: HttpStatus.OK,
       message: 'OK',
-      // data: { cart, total: calculateCartTotal(cart) },
-      data: { cart },
+      data: { cart, total: calculateCartTotal(cart) },
     };
   }
 
   // @UseGuards(JwtAuthGuard)
-  // @UseGuards(BasicAuthGuard)
+  @UseGuards(BasicAuthGuard)
   @Put()
-  updateUserCart(@Req() req: AppRequest, @Body() body) {
+  async updateUserCart(@Req() req: AppRequest, @Body() body) {
     // TODO: validate body payload...
-    const cart = this.cartService.updateByUserId(
+    const cart = await this.cartService.updateByUserId(
       getUserIdFromRequest(req),
       body,
     );
@@ -54,13 +54,13 @@ export class CartController {
       message: 'OK',
       data: {
         cart,
-        // total: calculateCartTotal(cart),
+        total: calculateCartTotal(cart),
       },
     };
   }
 
   // @UseGuards(JwtAuthGuard)
-  // @UseGuards(BasicAuthGuard)
+  @UseGuards(BasicAuthGuard)
   @Delete()
   clearUserCart(@Req() req: AppRequest) {
     this.cartService.removeByUserId(getUserIdFromRequest(req));
@@ -72,7 +72,7 @@ export class CartController {
   }
 
   // @UseGuards(JwtAuthGuard)
-  // @UseGuards(BasicAuthGuard)
+  @UseGuards(BasicAuthGuard)
   @Post('checkout')
   async checkout(@Req() req: AppRequest, @Body() body) {
     const userId = getUserIdFromRequest(req);

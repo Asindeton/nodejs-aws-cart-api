@@ -11,6 +11,7 @@ import { Orders } from './order/entryty/Order';
 import { CartItems } from './cart/entity/CartItems';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import 'dotenv/config';
+import { User } from './users/entity/User';
 
 const config: PostgresConnectionOptions = {
   type: 'postgres',
@@ -21,7 +22,7 @@ const config: PostgresConnectionOptions = {
   database: process.env.DB_DATABASE ?? 'test',
   synchronize: true,
   logging: true,
-  entities: [Carts, CartItems, Orders],
+  entities: [Carts, CartItems, Orders, User],
   subscribers: [],
   migrations: [],
 };

@@ -9,9 +9,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { User } from '../../users/entity/User';
+import { CartItems } from './CartItems';
 
 @Entity()
 export class Carts {
@@ -20,6 +25,13 @@ export class Carts {
 
   @Column({ type: 'uuid', nullable: false })
   user_id: string;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
+  user: User;
+
+  @OneToMany(() => CartItems, (cartItems) => cartItems.cart)
+  items: CartItems[];
 
   @CreateDateColumn({ type: 'timestamp', nullable: false })
   created_at: Date;
