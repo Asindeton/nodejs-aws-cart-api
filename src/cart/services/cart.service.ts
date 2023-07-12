@@ -17,7 +17,7 @@ export class CartService {
       relations: {
         items: true,
       },
-      where: { user_id: userId },
+      where: { user_id: userId, status: 'OPEN' },
     });
   }
 
@@ -80,5 +80,17 @@ export class CartService {
 
   async removeByUserId(userId): Promise<void> {
     await this.cartsRepository.delete({ user_id: userId });
+  }
+
+  async setOrderStatus(userId: string, status: string): Promise<Carts> {
+    const cart = await this.findByUserId(userId);
+    if (!cart) {
+      throw new Error('Cart does not exist.');
+    }
+
+    return await this.cartsRepository.save({
+      ...cart,
+      status,
+    });
   }
 }

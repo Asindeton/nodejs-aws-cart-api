@@ -18,7 +18,11 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "cdk": "cdk",
+    "cdk:bootstrap": "npx cdk bootstrap",
+    "cdk:deploy": "npx cdk deploy",
+    "cdk:destroy": "npx cdk destroy"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.3",

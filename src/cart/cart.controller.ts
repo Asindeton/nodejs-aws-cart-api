@@ -88,18 +88,25 @@ export class CartController {
         message: 'Cart is empty',
       };
     }
-
     // const { id: cartId, items } = cart;
     const { id: cartId } = cart;
-    // const total = calculateCartTotal(cart);
-    const order = this.orderService.create({
-      ...body, // TODO: validate and pick only necessary data
+    const total = calculateCartTotal(cart);
+    console.log({ body });
+    const order = this.orderService.create(
+      {
+        user_id: userId,
+        cart_id: body.cart_id,
+        address: body.address,
+        comment: body.address.comment,
+        status: 'inProgress',
+        total: total,
+      },
       userId,
-      cartId,
-      // items,
-      // total,
-    });
-    this.cartService.removeByUserId(userId);
+    );
+
+    console.log({ order });
+
+    await this.cartService.setOrderStatus(userId, 'ORDERED');
 
     return {
       statusCode: HttpStatus.OK,
